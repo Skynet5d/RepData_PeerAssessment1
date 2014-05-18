@@ -2,14 +2,14 @@
 
 
 ## Loading and preprocessing the data
-```{r LoadingPreprocessingData,echo=TRUE}
+```{r ,echo=TRUE}
 repdata<-read.csv("./activity/activity.csv", header=TRUE)
 str(repdata)
 ```
 
 
 ## What is mean total number of steps taken per day?
-```{r MeanTotal,echo=TRUE}
+```{r ,echo=TRUE}
 dailysteps<-tapply(repdata$steps,repdata$date,sum,na.rm=TRUE)
 hist(dailysteps,breaks=62,xlab="Total Daily Steps",main = paste("Histogram of Total Daily Steps"),)
 ```
@@ -28,7 +28,30 @@ median(dailysteps)
 
 
 ## Imputing missing values
+The total number of missing values in the dataset is :
+```{r ,echo=TRUE}
+length(which(is.na(repdata$steps)))
+```
 
+The filling strategy consists in replacing NAs values by daily mean of steps.
+Here below the new dataset filled with this strategy :
+```{r ,echo=TRUE}
+newrepdata<-repdata
+newrepdata$avg<-ave(repdata$steps,repdata$date,na.rm=TRUE)
+newrepdata$steps[!is.na(newrepdata$steps)]<-newrepdata$avg[!is.na(newrepdata$steps)]
+```
+Here the new histogramm :
+```{r ,echo=TRUE}
+dailysteps<-tapply(newrepdata$steps,newrepdata$date,sum,na.rm=TRUE)
+hist(dailysteps,breaks=62,xlab="Total Daily Steps",main = paste("Histogram of Total Daily Steps"),)
+```
+The new mean of daily total number of steps is
+```{r ,echo=TRUE}
+mean(dailysteps)
+```
 
+The new median of daily total number of steps is
+```{r ,echo=TRUE}
+median(dailysteps)
 
 ## Are there differences in activity patterns between weekdays and weekends?
